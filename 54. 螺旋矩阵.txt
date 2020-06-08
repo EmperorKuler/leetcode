@@ -1,0 +1,63 @@
+54. 螺旋矩阵
+
+给定一个包含 m x n 个元素的矩阵（m 行, n 列），请按照顺时针螺旋顺序，返回矩阵中的所有元素。
+
+示例 1:
+
+输入:
+[
+ [ 1, 2, 3 ],
+ [ 4, 5, 6 ],
+ [ 7, 8, 9 ]
+]
+输出: [1,2,3,6,9,8,7,4,5]
+
+示例 2:
+
+输入:
+[
+  [1, 2, 3, 4],
+  [5, 6, 7, 8],
+  [9,10,11,12]
+]
+输出: [1,2,3,4,8,12,11,10,9,5,6,7]
+
+代码：
+class Solution {
+    public List<Integer> spiralOrder(int[][] matrix) {
+        List<Integer> result=new LinkedList<>();
+        if(matrix.length==0||matrix[0].length==0) return result;
+        int istart=0,jstart=0;
+        int i=0,j=0;
+        int iend=matrix.length;
+        int jend=matrix[0].length;
+        while(true){
+            if(istart==iend||jstart==jend){
+                break;
+            }
+            if(istart==iend-1&&jstart==jend-1){
+                result.add(matrix[istart][jstart]);
+                break;
+            }
+            if(istart==iend-1){
+                for(j=jstart;j<jend;j++) 
+                    result.add(matrix[istart][j]);
+                break;
+            }
+            if(jstart==jend-1){
+                for(i=istart;i<iend;i++) 
+                    result.add(matrix[i][jstart]);
+                break;
+            }
+            i=istart;
+            j=jstart;
+            for(;j<jend;j++) result.add(matrix[i][j]);
+            for(i+=1,j-=1;i<iend;i++) result.add(matrix[i][j]);
+            for(i-=1,j-=1;j>=jstart;j--) result.add(matrix[i][j]);
+            for(j+=1,i-=1;i>istart;i--) result.add(matrix[i][j]);
+            istart++;jstart++;
+            iend--;jend--;
+        }
+        return result;
+    }
+}
