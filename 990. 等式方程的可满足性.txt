@@ -39,7 +39,7 @@
     equations[i][2] 是 '='
 
 解答：
-
+//答案直接比较根，就是相等的两个其中一个会指向另一个，例如a=b,b会指向a,对于c=b,c指向b,因此判断d与b是否相等，就要判断d与b是否指向了同一个根，很巧妙，直接用个26位数组即可
 class Solution {
     public boolean equationsPossible(String[] equations) {
         List<Character>[] num=new List[26];
