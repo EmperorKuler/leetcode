@@ -1,0 +1,59 @@
+62. 不同路径
+
+一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+
+机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+
+问总共有多少条不同的路径？
+
+示例 1:
+
+输入: m = 3, n = 2
+输出: 3
+解释:
+从左上角开始，总共有 3 条路径可以到达右下角。
+1. 向右 -> 向右 -> 向下
+2. 向右 -> 向下 -> 向右
+3. 向下 -> 向右 -> 向右
+
+示例 2:
+
+输入: m = 7, n = 3
+输出: 28
+
+
+class Solution {
+    //超时，方法是用递归，递归至计算m=1，n=1时的可能
+    // public int uniquePaths(int m, int n) {
+    //     if(m==1||n==1) return 1;
+    //     return uniquePaths(m-1,n)+uniquePaths(m,n-1);
+    // }
+    //优化了上一个方法，通过map存储不同m，n的路径数
+    // public static Map<String,Integer> map=new HashMap<>();{
+    //     map.put("1-1",1);
+    // }
+    // public int uniquePaths(int m, int n) {
+    //     String s=""+m+"-"+n;
+    //     Integer num=map.get(s);
+    //     if(num!=null) return num;
+    //     if(m!=1&&n!=1) num=uniquePaths(m-1,n)+uniquePaths(m,n-1);
+    //     else if(m==1) num=uniquePaths(m,n-1);
+    //     else num=uniquePaths(m-1,n);
+    //     map.put(s,num);
+    //     return num;
+    //     //return 0;
+    // }
+
+
+    //前两个方法都掉书袋了，答案方法用动态规划，后一个路径数依赖于前两个
+    public int uniquePaths(int m, int n) {
+        int[][] paths=new int[m][n];
+        for(int i=0;i<m;i++) paths[i][0]=1;
+        for(int i=0;i<n;i++) paths[0][i]=1;
+        for(int i=1;i<m;i++)
+            for(int j=1;j<n;j++){
+                paths[i][j]=paths[i-1][j]+paths[i][j-1];
+            }
+        return paths[m-1][n-1];
+    }
+}

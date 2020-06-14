@@ -1,0 +1,64 @@
+61. 旋转链表
+
+给定一个链表，旋转链表，将链表每个节点向右移动 k 个位置，其中 k 是非负数。
+
+示例 1:
+
+输入: 1->2->3->4->5->NULL, k = 2
+输出: 4->5->1->2->3->NULL
+解释:
+向右旋转 1 步: 5->1->2->3->4->NULL
+向右旋转 2 步: 4->5->1->2->3->NULL
+
+示例 2:
+
+输入: 0->1->2->NULL, k = 4
+输出: 2->0->1->NULL
+解释:
+向右旋转 1 步: 2->0->1->NULL
+向右旋转 2 步: 1->2->0->NULL
+向右旋转 3 步: 0->1->2->NULL
+向右旋转 4 步: 2->0->1->NULL
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    //方法是当k小于链表长，转换为寻找倒数第k个节点
+    //当k大于表长，length变量负责记录链表长，k对链表长取余后获取第length-k个正数的节点
+    public ListNode rotateRight(ListNode head, int k) {
+        if(head==null) return head;
+        int length=0;
+        ListNode start=new ListNode();
+        ListNode pre=start;
+        pre.next=head;
+        while(pre.next!=null&&length<k){
+            length++;
+            pre=pre.next;
+        }
+        if(length==k&&pre.next==null) return head; //当这两点同时成立也就是链表长等于k时采用下面两种处理之一都会造成环形链表问题
+        if(length==k){
+            while(pre.next!=null){
+                start=start.next;
+                pre=pre.next;
+            }
+            pre.next=head;
+        }else{
+            k=length-k%length;
+            pre.next=head;
+            while(k>0){
+                k--;
+                start=start.next;
+            }
+        }
+        pre=start.next;
+        start.next=null;
+        return pre;
+        
+    }
+}

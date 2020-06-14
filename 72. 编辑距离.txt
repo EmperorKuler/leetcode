@@ -1,0 +1,56 @@
+72. 编辑距离
+
+给你两个单词 word1 和 word2，请你计算出将 word1 转换成 word2 所使用的最少操作数 。
+
+你可以对一个单词进行如下三种操作：
+
+    插入一个字符
+    删除一个字符
+    替换一个字符
+
+ 
+
+示例 1：
+
+输入：word1 = "horse", word2 = "ros"
+输出：3
+解释：
+horse -> rorse (将 'h' 替换为 'r')
+rorse -> rose (删除 'r')
+rose -> ros (删除 'e')
+
+示例 2：
+
+输入：word1 = "intention", word2 = "execution"
+输出：5
+解释：
+intention -> inention (删除 't')
+inention -> enention (将 'i' 替换为 'e')
+enention -> exention (将 'n' 替换为 'x')
+exention -> exection (将 'n' 替换为 'c')
+exection -> execution (插入 'u')
+
+
+代码：
+class Solution {
+    public int minDistance(String word1, String word2) {
+        //官方写的云里雾里的，为啥三个都是小于等于a + 1 b + 1 c + 1,就要选择最小的那个呢，明明只是给出了上限
+        //动态规划理解，以最后的horse 和 ros为例
+        //设horse 到 ro需要a步，那horse到ro再到ros需要a+1步，但这有个问题，就是horse中已经有了从ro到ros多增加的这个s怎么办，好吧，难以理解
+        //举个简单的例子，从hise到is，显然从hise到i需要三步，即a=3，而从hise到i再到is只需要3+1步，但实际上从hise到is只需2步，是a-1而不是a+1，因为hise已经有了从i到is多增加的这个s，那怎么办，需要转换思路，我们不修改a+1，而是讨论另一种情况，即假设从his 到is需要b=1步，则从his 到 hise再到is为b+1步，显然这里我们已经弥补了之前的hise已经有了从i到is多增加的这个s这种情况，因为我们的这个情况下is已经是完整的了（完整意思是从hise到is，无需借助i中间量），但这有个问题，就是我们可能his并没有从i到is多增加的这个s，但hise有，显然这个例子不合适，因此换个例子
+        //比如从hi到is，hi并没有从i到is多增加的这个s，但his有，意思是his有从i到is多增加的这个s，这时我们需要考虑的便是从hi到i需要c=1步，从his到is需要c+int('s'!='s')步，两个's'中第一个为his的，第二个为is的
+        //综上所述，公式为path[i][j]=min(path[i-1][j]+1,path[i][j-1]+1,c=path[i-1][j-1]+(word1.charAt(i)==word2.charAt(j)?0:1))
+        int[][] path=new int[word1.length()+1][word2.length()+1];
+        for(int i=1;i<=word1.length();i++) path[i][0]=i;
+        for(int i=1;i<=word2.length();i++) path[0][i]=i;
+        int a=0,b=0,c=0;
+        for(int i=1;i<=word1.length();i++)
+            for(int j=1;j<=word2.length();j++){
+                a=path[i-1][j]+1;
+                b=path[i][j-1]+1;
+                c=path[i-1][j-1]+(word1.charAt(i-1)==word2.charAt(j-1)?0:1);
+                path[i][j]=Math.min(Math.min(a,b),c);
+            }
+        return path[word1.length()][word2.length()];
+    }
+}

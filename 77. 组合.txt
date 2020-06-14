@@ -1,0 +1,60 @@
+77. 组合
+
+给定两个整数 n 和 k，返回 1 ... n 中所有可能的 k 个数的组合。
+
+示例:
+
+输入: n = 4, k = 2
+输出:
+[
+  [2,4],
+  [3,4],
+  [2,3],
+  [1,2],
+  [1,3],
+  [1,4],
+]
+
+
+代码：
+class Solution {
+    // public List<List<Integer>> combine(int n, int k) {
+    //     List<List<Integer>> list=new ArrayList<>();
+    //     return fill(n,k,1,new ArrayList<Integer>());
+    // }
+
+    // List<List<Integer>> fill(int n, int k, int now,List<Integer> ints){
+    //     List<List<Integer>> list=new ArrayList<>();
+    //     if(now>n) return list;
+    //     for(;now<=n-k+1;now++){
+    //         List<Integer> l=new ArrayList<>();
+    //         l.addAll(ints);
+    //         l.add(now);
+    //         if(k-1==0) list.add(l);
+    //         else list.addAll(fill(n,k-1,now+1,l));   
+    //     }
+    //     return list;
+    // }
+
+    //采用数组与上一个方法的List没啥区别
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> list=new ArrayList<>();
+        Integer[] num=new Integer[k];
+        for(int i=0;i<k;i++) num[i]=i+1;
+        while(true){
+            list.add((List)Arrays.asList(num));
+            num=num.clone();
+            num[k-1]++;
+            if(num[k-1]>n){
+                int i=k-1;
+                for(;i>=0&&num[i]>n-k+i;i--);
+                if(i==-1) break;
+                else{
+                    num[i]++;
+                    for(i++;i<k;i++) num[i]=num[i-1]+1;
+                }
+            }
+        }
+        return list;
+    }
+}
