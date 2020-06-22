@@ -1,0 +1,81 @@
+117. 填充每个节点的下一个右侧节点指针 II
+
+给定一个二叉树
+
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+
+填充它的每个 next 指针，让这个指针指向其下一个右侧节点。如果找不到下一个右侧节点，则将 next 指针设置为 NULL。
+
+初始状态下，所有 next 指针都被设置为 NULL。
+
+ 
+
+进阶：
+
+    你只能使用常量级额外空间。
+    使用递归解题也符合要求，本题中递归程序占用的栈空间不算做额外的空间复杂度。
+
+/*
+// Definition for a Node.
+class Node {
+    public int val;
+    public Node left;
+    public Node right;
+    public Node next;
+
+    public Node() {}
+    
+    public Node(int _val) {
+        val = _val;
+    }
+
+    public Node(int _val, Node _left, Node _right, Node _next) {
+        val = _val;
+        left = _left;
+        right = _right;
+        next = _next;
+    }
+};
+*/
+
+class Solution {
+    //创建两个指针，一个指向父亲的第一个节点，一个指向当前孩子节点的上一个节点
+    public Node connect(Node root) {
+        if(root==null) return root;
+        Node start=root;
+        Node father;
+        Node last;
+        while(start!=null){
+            father=start;
+            start=null;
+            last=null;
+            while(father!=null){
+                if(father.left!=null){
+                    if(last==null){
+                        last=father.left;
+                        start=last;
+                    }else{
+                        last.next=father.left;
+                        last=last.next;
+                    }
+                }
+                if(father.right!=null){
+                    if(last==null){
+                        last=father.right;
+                        start=last;
+                    }else{
+                        last.next=father.right;
+                        last=last.next;
+                    }
+                }
+                father=father.next;
+            }
+        }
+        return root;
+    }
+}

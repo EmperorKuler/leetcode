@@ -1,0 +1,38 @@
+97. 交错字符串
+
+给定三个字符串 s1, s2, s3, 验证 s3 是否是由 s1 和 s2 交错组成的。
+
+示例 1:
+
+输入: s1 = "aabcc", s2 = "dbbca", s3 = "aadbbcbcac"
+输出: true
+
+示例 2:
+
+输入: s1 = "aabcc", s2 = "dbbca", s3 = "aadbbbaccc"
+输出: false
+
+class Solution {
+    //本来i,j,k表示前i个s1,前j个s2,前k个s3匹配，但显然i+j=k相关，降维，i,j表示前i个s1,前j个s2,前i+j个s3匹配
+    //方法，前i+j个s3最后一个字符显然要么是前i个s1的最后一个字符要么是前j个s2的最后一个字符
+    //因此可变为最后一个字符匹配时前i+j-1个s3与 前i个s1前j-1个s2 或 前i-1个s1前j个s2 是否匹配
+    public boolean isInterleave(String s1, String s2, String s3) {
+        if(s1.length()+s2.length()!=s3.length()) return false;
+        boolean[][] dp=new boolean[s1.length()+1][s2.length()+1];
+        dp[0][0]=true;
+        for(int i=1;i<=s1.length();i++){
+            if(s1.charAt(i-1)==s3.charAt(i-1)) dp[i][0]=true;
+            else break;
+        }
+        for(int i=1;i<=s2.length();i++){
+            if(s2.charAt(i-1)==s3.charAt(i-1)) dp[0][i]=true;
+            else break;
+        }
+
+        for(int i=1;i<=s1.length();i++)
+            for(int j=1;j<=s2.length();j++)
+                dp[i][j]=(dp[i-1][j]&&s1.charAt(i-1)==s3.charAt(i+j-1))||(dp[i][j-1]&&s2.charAt(j-1)==s3.charAt(i+j-1));
+
+        return dp[s1.length()][s2.length()];
+    }
+}

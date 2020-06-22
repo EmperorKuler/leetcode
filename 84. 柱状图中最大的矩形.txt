@@ -1,0 +1,94 @@
+84. 柱状图中最大的矩形
+
+给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。
+
+求在该柱状图中，能够勾勒出来的矩形的最大面积。
+
+ 
+
+以上是柱状图的示例，其中每个柱子的宽度为 1，给定的高度为 [2,1,5,6,2,3]。
+
+ 
+
+图中阴影部分为所能勾勒出的最大矩形面积，其面积为 10 个单位。
+
+ 
+
+示例:
+
+输入: [2,1,5,6,2,3]
+输出: 10
+
+
+
+
+class Solution {
+    public int largestRectangleArea(int[] heights) {
+        // //我只走到了官方算法的第二个
+        // //方法是采用单调队列一次遍历对每一个数组值找出左边第一个小于该值的索引，再一次遍历对每一个数组值找出右边第一个小于该值的索引，右边-左边-1得到了该以该数组值为高的情况下的最大宽度，再乘以数组值得到以该数组值为高的最大面积，但其实单调队列只用一次遍历就可以得到该数组值左边第一个小于该值的索引与右边第一个小于该值的索引，方法见非注释部分
+        // int max=0;
+        // Stack<Integer> stack=new Stack<>();
+        // Map<Integer,Integer> map=new HashMap<>();
+        // int i=0;
+        // int peek;
+        // for(;i<heights.length;i++){
+        //     if(stack.isEmpty()||heights[i]>=heights[stack.peek()]) {
+        //         stack.push(i);
+        //     }
+        //     else{
+        //         while(!stack.isEmpty()&&heights[i]<heights[stack.peek()]){
+        //             peek=stack.pop();
+        //             map.put(peek,(i-peek)*heights[peek]);                 
+        //         }
+        //         stack.push(i);
+        //     }
+        // }
+        // while(!stack.isEmpty()){
+        //     peek=stack.pop();
+        //     map.put(peek,(i-peek)*heights[peek]);  
+        // }
+
+        // stack=new Stack<>();
+        // for(i=heights.length-1;i>=0;i--){
+        //     if(stack.isEmpty()||heights[i]>=heights[stack.peek()]) {
+        //         stack.push(i);
+        //     }
+        //     else{
+        //         while(!stack.isEmpty()&&heights[i]<heights[stack.peek()]){
+        //             peek=stack.pop();
+        //             max=Math.max(max,(peek-i-1)*heights[peek]+map.get(peek));
+        //         }
+        //         stack.push(i);
+        //     }
+        // }
+        // while(!stack.isEmpty()){
+        //     peek=stack.pop();
+        //     max=Math.max(max,(peek-i-1)*heights[peek]+map.get(peek));
+        // }
+        // return max;
+
+
+        //第三个方法
+        int max=0;
+        Stack<Integer> stack=new Stack<>();
+        int i=0;
+        int peek;
+        for(;i<heights.length;i++){
+            if(stack.isEmpty()||heights[i]>=heights[stack.peek()]) { //单调队列只用一次遍历就可以得到该数组值左边第一个 小于 该值的索引与右边第一个 小于 该值的索引，但该题此处只能得到左边第一个  小于等于  与右边第一个 小于  该值的索引，（当然这题尽管这样做，两个相同的高度值中左边那个高度值会得到真正的面积），如果想要得到左右都是  小于  该值的索引，那此处不要用大于等于号，而应该用大于号并对等于部分进行特殊处理，会很麻烦，此时可以考虑第一个方法，但还是麻烦的那个耗时短
+                stack.push(i);
+            }
+            else{
+                while(!stack.isEmpty()&&heights[i]<heights[stack.peek()]){
+                    peek=stack.pop();
+                    max=Math.max((i-(stack.isEmpty()?-1:stack.peek())-1)*heights[peek],max);     
+                }
+                stack.push(i);
+            }
+        }
+        while(!stack.isEmpty()){
+            peek=stack.pop();
+            max=Math.max((i-(stack.isEmpty()?-1:stack.peek())-1)*heights[peek],max);
+        }
+        return max;
+    }
+}

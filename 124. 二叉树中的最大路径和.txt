@@ -1,0 +1,82 @@
+124. 二叉树中的最大路径和
+
+给定一个非空二叉树，返回其最大路径和。
+
+本题中，路径被定义为一条从树中任意节点出发，达到任意节点的序列。该路径至少包含一个节点，且不一定经过根节点。
+
+示例 1:
+
+输入: [1,2,3]
+
+       1
+      / \
+     2   3
+
+输出: 6
+
+示例 2:
+
+输入: [-10,9,20,null,null,15,7]
+
+   -10
+   / \
+  9  20
+    /  \
+   15   7
+
+输出: 42
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    int max=Integer.MIN_VALUE;
+    public int maxPathSum(TreeNode root) {
+        getResult(root);
+        return this.max;
+    }
+
+    //方法：该函数返回的是从root到root下面所有节点可能的最大值
+    //this.max在函数中顺便维护，通过计算root.val 与getResult(root.left) getResult(root.right)的最大和值，表明以root为转点的可能的最大值
+    //返回的int可以称为该节点对父节点的贡献值
+    int getResult(TreeNode root){
+        if(root.left==null){
+            if(root.right==null){
+                this.max=Math.max(this.max,root.val);
+                return root.val;
+            } 
+            else{
+                int result=getResult(root.right);
+                int m=result<0?root.val:(root.val+result);
+                this.max=Math.max(this.max,m);
+                return m;
+            }
+        }else{
+            if(root.right==null){
+                int result=getResult(root.left);
+                int m=result<0?root.val:(root.val+result);
+                this.max=Math.max(this.max,m);
+                return m;
+            } 
+            else{
+                int result1=getResult(root.left);
+                int result2=getResult(root.right);
+                int m=root.val;
+                if(result1>0) m+=result1;
+                if(result2>0) m+=result2;
+
+                this.max=Math.max(this.max,m);
+
+                if(result1<result2) result1=result2;
+
+                return result1<0?root.val:(result1+root.val);
+            }
+        }
+    }
+}

@@ -1,0 +1,59 @@
+105. 从前序与中序遍历序列构造二叉树
+
+根据一棵树的前序遍历与中序遍历构造二叉树。
+
+注意:
+你可以假设树中没有重复的元素。
+
+例如，给出
+
+前序遍历 preorder = [3,9,20,15,7]
+中序遍历 inorder = [9,3,15,20,7]
+
+返回如下的二叉树：
+
+    3
+   / \
+  9  20
+    /  \
+   15   7
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+	//前中后序说的是根节点在遍历的次序
+	//中序+后序、中序+先序可以唯一确定一棵二叉树。
+    int[] preorder;
+    int[] inorder;
+    int length;
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        if(preorder.length==0) return null;
+        this.preorder=preorder;
+        this.inorder=inorder;
+        this.length=preorder.length;
+        return getTree(0,this.length-1,0);
+    }
+
+    //k为preorder索引，也是本次递归的根节点，i，j为inorder索引，可见inorder中会有preorder[k]这个值，其值左边为根节点左子树，右边为根节点右子树，递归生成左子树与右子树
+    //对于任意一颗树而言，前序遍历的形式总是
+    //[ 根节点, [左子树的前序遍历结果], [右子树的前序遍历结果] ]
+    //即根节点总是前序遍历中的第一个节点。而中序遍历的形式总是
+    //[ [左子树的中序遍历结果], 根节点, [右子树的中序遍历结果] ]
+    TreeNode getTree(int i,int j, int k){
+        if(i>j) return null;//[1,2] [2,1]时会越界，同时也会i>j，即右子树为空时可用数组的下界索引反而会大于上界
+        TreeNode node=new TreeNode(this.preorder[k]);
+        if(i==j) return node;
+        int m=j;
+        for(;this.inorder[m]!=this.preorder[k];m--);
+        node.left=getTree(i,m-1,k+1);
+        node.right=getTree(m+1,j,k+m-i+1);
+        return node;
+    }
+}

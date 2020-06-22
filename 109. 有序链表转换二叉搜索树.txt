@@ -1,0 +1,64 @@
+109. 有序链表转换二叉搜索树
+
+给定一个单链表，其中的元素按升序排序，将其转换为高度平衡的二叉搜索树。
+
+本题中，一个高度平衡二叉树是指一个二叉树每个节点 的左右两个子树的高度差的绝对值不超过 1。
+
+示例:
+
+给定的有序链表： [-10, -3, 0, 5, 9],
+
+一个可能的答案是：[0, -3, 9, -10, null, 5], 它可以表示下面这个高度平衡二叉搜索树：
+
+      0
+     / \
+   -3   9
+   /   /
+ -10  5
+
+代码：
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    //生成的树必须保证中序遍历值与给的一样
+    //方法，递归调用，先生成左子树，再生成当前节点，再生成右子树
+    ListNode head;
+    public TreeNode sortedListToBST(ListNode head) {
+        if(head==null) return null;
+        int count=0;
+        this.head=head;
+        for(;head!=null;head=head.next,count++);
+        return getTree(1,count);
+    }
+
+    TreeNode getTree(int i,int j){//i,j并没有其它作用，他只是限制head访问的次数，也就是Tree的节点数
+        if(i==j){
+            TreeNode node=new TreeNode(this.head.val);
+            this.head=this.head.next;
+            return node;
+        }
+        if(i>j) return null;
+        int mid=(i+j)/2;
+        TreeNode left=getTree(i,mid-1);//关键是这里会最先不断的递归下去，不断消耗head
+        TreeNode node=new TreeNode(this.head.val);//等到执行到这里的时候，head前i->mid-1的值已经被消耗完毕，当前head指向的值已经为head第mid节点的值
+        this.head=this.head.next;
+        node.left=left;
+        node.right=getTree(mid+1,j);
+        return node;
+    }
+}
