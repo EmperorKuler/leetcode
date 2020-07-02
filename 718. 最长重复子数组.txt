@@ -1,0 +1,53 @@
+718. 最长重复子数组
+
+给两个整数数组 A 和 B ，返回两个数组中公共的、长度最长的子数组的长度。
+
+示例 1:
+
+输入:
+A: [1,2,3,2,1]
+B: [3,2,1,4,7]
+输出: 3
+解释: 
+长度最长的公共子数组是 [3, 2, 1]。
+
+说明:
+
+    1 <= len(A), len(B) <= 1000
+    0 <= A[i], B[i] < 100
+
+class Solution {
+    public int findLength(int[] A, int[] B) {
+
+        //动态规划，dp[i][j]是以A[i-1]B[j-1]为结尾的数组长度
+        // int[][] dp=new int[A.length+1][B.length+1];
+        // int max=0;
+        // for(int i=1;i<=A.length;i++)
+        //     for(int j=1;j<=B.length;j++){
+        //         dp[i][j]=A[i-1]==B[j-1]?dp[i-1][j-1]+1:0;
+        //         max=Math.max(max,dp[i][j]);
+        //     }
+        // return max;
+
+        //动态规划简化版
+        int[] dp=new int[A.length+1];
+        int max=0;
+        for(int j=1;j<=B.length;j++)
+            for(int i=A.length;i>0;i--){
+                dp[i]=A[i-1]==B[j-1]?dp[i-1]+1:0;
+                max=Math.max(max,dp[i]);
+            }
+        return max;
+
+
+        // int istart=0,iend=0,jstart=0,jend=0;
+        // int max=0;
+        // for(;istart<A.length;istart++){
+        //     for(jstart=0;jstart<B.length;jstart++){
+        //         for(jend=jstart,iend=istart;iend<A.length&&jend<B.length&&A[iend]==B[jend];iend++,jend++);
+        //         max=Math.max(max,jend-jstart);
+        //     }
+        // }
+        // return max;
+    }
+}

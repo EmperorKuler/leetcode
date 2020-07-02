@@ -1,0 +1,98 @@
+123. 买卖股票的最佳时机 III
+
+给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。
+
+设计一个算法来计算你所能获取的最大利润。你最多可以完成 两笔 交易。
+
+注意: 你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。
+
+示例 1:
+
+输入: [3,3,5,0,0,3,1,4]
+输出: 6
+解释: 在第 4 天（股票价格 = 0）的时候买入，在第 6 天（股票价格 = 3）的时候卖出，这笔交易所能获得利润 = 3-0 = 3 。
+     随后，在第 7 天（股票价格 = 1）的时候买入，在第 8 天 （股票价格 = 4）的时候卖出，这笔交易所能获得利润 = 4-1 = 3 。
+
+示例 2:
+
+输入: [1,2,3,4,5]
+输出: 4
+解释: 在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。   
+     注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。   
+     因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
+
+示例 3:
+
+输入: [7,6,4,3,1] 
+输出: 0 
+解释: 在这个情况下, 没有交易完成, 所以最大利润为 0。
+
+class Solution {
+	//通用方法一
+    //最总所做的2次的买卖区间必定可以采用1个分隔线将数组分成2段，求出每段交易一次的最大值相加即可
+    //即不断将数组分为两段，计算每一段一次交易最大值，再将数组分为两段的过程中两端之和的最大值即为所求
+    // public int maxProfit(int[] prices) {
+    //     int max=0;
+    //     int max1=0,min1=Integer.MAX_VALUE;
+    //     for(int i=0;i<=prices.length;i++){
+    //         for(int j=0;j<i;j++){
+    //             if(prices[j]<min1) min1=prices[j];
+    //             else max1=Math.max(max1,prices[j]-min1);
+    //         }
+    //         int max2=0,min2=Integer.MAX_VALUE;
+    //         for(int j=i;j<prices.length;j++){
+    //             if(prices[j]<min2) min2=prices[j];
+    //             else max2=Math.max(max2,prices[j]-min2);
+    //         }
+    //         max=Math.max(max,max1+max2);
+    //     }
+    //     return max;
+    // }
+
+    //对上面优化，提前计算所有段的可能性
+    // public int maxProfit(int[] prices) {
+    //     int max=0,min=Integer.MAX_VALUE;
+    //     int[] left=new int[prices.length+1];
+    //     int[] right=new int[prices.length+1];
+    //     for(int i=0;i<prices.length;i++){
+    //         if(prices[i]<min) min=prices[i];
+    //         else max=Math.max(max,prices[i]-min);
+    //         left[i+1]=max;
+    //     }
+
+    //     max=0;
+    //     min=0;
+    //     for(int i=prices.length-1;i>=0;i--){
+    //         if(prices[i]>min) min=prices[i];
+    //         else max=Math.max(max,min-prices[i]);  
+    //         right[i]=max;
+    //     }
+    //     max=0;
+    //     for(int i=0;i<=prices.length;i++)            
+    //         max=Math.max(max,left[i]+right[i]);
+    //     return max;
+    // }
+
+
+	//通用方法二
+    public int maxProfit(int[] prices) {
+        if(prices.length==0) return 0;
+        int[][][] dp=new int[prices.length][3][2];   //第i天，j表示前i天最多可以买入j次，k表示当前未持有(k=0)或持有股票(k=1)，注意,只有买入时花费次数，卖出时不变
+
+        dp[0][0][0]=0;
+        dp[0][0][1]=Integer.MIN_VALUE;
+        dp[0][1][0]=0;
+        dp[0][1][1]=-prices[0];
+        dp[0][2][0]=0;
+        dp[0][2][1]=-prices[0];
+        for(int i=1;i<prices.length;i++){
+            dp[i][0][1]=dp[i-1][0][1];
+            dp[i][0][0]=Math.max(dp[i-1][0][0],dp[i-1][0][1]+prices[i]);
+            for(int j=1;j<3;j++){
+                dp[i][j][0]=Math.max(dp[i-1][j][0],dp[i-1][j][1]+prices[i]);
+                dp[i][j][1]=Math.max(dp[i-1][j][1],dp[i-1][j-1][0]-prices[i]);
+            }
+        }
+        return dp[prices.length-1][2][0];
+    }
+}

@@ -1,0 +1,91 @@
+132. 分割回文串 II
+
+给定一个字符串 s，将 s 分割成一些子串，使每个子串都是回文串。
+
+返回符合要求的最少分割次数。
+
+示例:
+
+输入: "aab"
+输出: 1
+解释: 进行一次分割就可将 s 分割成 ["aa","b"] 这样两个回文子串。
+
+class Solution {
+    //正着走，超时
+    // boolean[][] dp;
+    // int min=Integer.MAX_VALUE;
+    // String s;
+
+    // public int minCut(String s) {
+    //     boolean[][] dp=new boolean[s.length()][s.length()];
+    //     for(int i=0;i<s.length();i++){
+    //         dp[i][i]=true;
+    //         for(int j=1;i-j>=0&&i+j<s.length();j++){
+    //             if(s.charAt(i+j)==s.charAt(i-j)) dp[i-j][i+j]=true;
+    //             else break;
+    //         }
+    //         if(i-1>=0&&s.charAt(i-1)==s.charAt(i)){
+    //             dp[i-1][i]=true;
+    //             for(int j=1;i-j-1>=0&&i+j<s.length();j++){
+    //                 if(s.charAt(i-j-1)==s.charAt(i+j)) dp[i-j-1][i+j]=true;
+    //                 else break;
+    //             }
+    //         }
+    //     }
+    //     this.dp=dp;
+    //     this.s=s;
+    //     getResult(0,0);
+    //     return this.min;
+    // }
+
+    // void getResult(int i,int count){
+    //     //System.out.println("i:"+i+" count:"+count);
+    //     if(count>this.min) return;
+
+    //     if(i==this.s.length()){
+    //         this.min=count-1;
+    //         return ;
+    //     }
+
+    //     for(int j=this.s.length()-1;j>=i;j--){
+    //         if(dp[i][j]){
+    //             getResult(j+1,count+1);
+    //         }
+    //     }
+    // }
+
+    //反着走，动态规划
+    public int minCut(String s) {
+        boolean[][] dp=new boolean[s.length()][s.length()];
+        for(int i=0;i<s.length();i++){
+            dp[i][i]=true;
+            for(int j=1;i-j>=0&&i+j<s.length();j++){
+                if(s.charAt(i+j)==s.charAt(i-j)) dp[i-j][i+j]=true;
+                else break;
+            }
+            if(i-1>=0&&s.charAt(i-1)==s.charAt(i)){
+                dp[i-1][i]=true;
+                for(int j=1;i-j-1>=0&&i+j<s.length();j++){
+                    if(s.charAt(i-j-1)==s.charAt(i+j)) dp[i-j-1][i+j]=true;
+                    else break;
+                }
+            }
+        }
+
+        int[] numDp=new int[s.length()];
+
+        numDp[0]=0;
+        for(int i=1;i<s.length();i++){
+            int min=Integer.MAX_VALUE;
+            for(int j=i;j>=0;j--){
+                if(dp[j][i]){
+                    if(j==0) min=0;
+                    else min=Math.min(min,numDp[j-1]+1);
+                }
+            }
+            numDp[i]=min;
+        }
+
+        return numDp[s.length()-1];
+    }
+}

@@ -1,0 +1,117 @@
+126. 单词接龙 II
+
+给定两个单词（beginWord 和 endWord）和一个字典 wordList，找出所有从 beginWord 到 endWord 的最短转换序列。转换需遵循如下规则：
+
+    每次转换只能改变一个字母。
+    转换后得到的单词必须是字典中的单词。
+
+说明:
+
+    如果不存在这样的转换序列，返回一个空列表。
+    所有单词具有相同的长度。
+    所有单词只由小写字母组成。
+    字典中不存在重复的单词。
+    你可以假设 beginWord 和 endWord 是非空的，且二者不相同。
+
+示例 1:
+
+输入:
+beginWord = "hit",
+endWord = "cog",
+wordList = ["hot","dot","dog","lot","log","cog"]
+
+输出:
+[
+  ["hit","hot","dot","dog","cog"],
+  ["hit","hot","lot","log","cog"]
+]
+
+示例 2:
+
+输入:
+beginWord = "hit"
+endWord = "cog"
+wordList = ["hot","dot","dog","lot","log"]
+
+输出: []
+
+解释: endWord "cog" 不在字典中，所以不存在符合要求的转换序列。
+
+class Solution {
+    //其实就是图的遍历
+    //每一层访问到的点可以剔除，因为下一层若访问到这个节点的长度绝对比这一层访问到的节点的长度长
+    List<List<String>> result=new ArrayList<>();
+    int[] flag;
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList){
+
+        List<List<String>> ls=new ArrayList<>();
+
+        this.flag=new int[wordList.size()];
+        int ok=0;
+        for(;ok<this.flag.length;ok++){  //ok表示的是endWord所在的索引
+            if(wordList.get(ok).equals(endWord)) break;
+        }
+        if(ok==wordList.size()) return ls;
+
+        List<String> list=new ArrayList<>();
+        list.add(beginWord);
+        ls.add(list);
+       
+        get(ls,wordList,0,ok);
+        return this.result;
+    }
+
+    void get(List<List<String>> list, List<String> wordList, int i,int ok){
+        List<List<String>> myResult=new ArrayList<>();//存储目前走过的所有路径
+        Map<String,List<String>> map=new HashMap<>(); //存储某个节点的所有下一节点
+        i++;
+        boolean use=false;//存储是否访问到终点
+        for(List<String> l:list){//总的方法就是选取目前走的所有路径，重写该路径，补充能走的所有下一个节点，有点向回溯，唯一注意一点就是上一轮已经能走到的位置没必要这一轮再走一次，因为距离绝对会比上一轮能走到的距离大
+            String now=l.get(l.size()-1);
+            if(map.get(now)==null){
+                List<String> nowList=new ArrayList<>();
+                for(int j=0;j<wordList.size();j++){
+                    if(this.flag[j]==0||this.flag[j]==i){
+                        if(canChange(now,wordList.get(j))){
+                            use=true;
+                            nowList.add(wordList.get(j));
+                            this.flag[j]=i;
+                            List<String> myans=new ArrayList<>();
+                            myans.addAll(l);
+                            myans.add(wordList.get(j));
+                            myResult.add(myans);
+                        }
+                    }
+                }
+                map.put(now,nowList);
+            }else{
+                for(String ss:map.get(now)){
+                    List<String> myans=new ArrayList<>();
+                    myans.addAll(l);
+                    myans.add(ss);
+                    myResult.add(myans);
+                }
+            }          
+        }
+
+        if(this.flag[ok]!=0){//当ok索引位置数值不为0，说明此处已经走到了终点，结束迭代
+            for(List<String> l:myResult){
+                if(l.get(l.size()-1).equals(wordList.get(ok))){
+                    this.result.add(l);
+                }
+            }
+        }
+        if(use) get(myResult,wordList,i,ok);
+    }
+
+    boolean canChange(String from, String to){
+        int num=0;
+        for(int i=0;i<from.length();i++){
+            if(from.charAt(i)!=to.charAt(i)){
+                num++;
+                if(num>1) return false;
+            }
+        }
+        return true;
+    } 
+}

@@ -1,0 +1,76 @@
+378. 有序矩阵中第K小的元素
+
+给定一个 n x n 矩阵，其中每行和每列元素均按升序排序，找到矩阵中第 k 小的元素。
+请注意，它是排序后的第 k 小元素，而不是第 k 个不同的元素。
+
+ 
+
+示例：
+
+matrix = [
+   [ 1,  5,  9],
+   [10, 11, 13],
+   [12, 13, 15]
+],
+k = 8,
+
+返回 13。
+
+ 
+
+提示：
+你可以假设 k 的值永远是有效的，1 ≤ k ≤ n2 。
+
+
+class Solution {
+    // public int kthSmallest(int[][] matrix, int k) {
+    //     int[] indexes=new int[matrix.length];
+    //     int min=-1;
+    //     int index=-1;
+    //     for(;k>0;k--){
+    //         int i=0;
+    //         for(;i<matrix.length;i++){
+    //             if(indexes[i]==matrix[0].length) continue;
+    //             if(min==-1||matrix[i][indexes[i]]<min){
+    //                 min=matrix[i][indexes[i]];
+    //                 index=i;
+    //             }
+    //             // else{
+    //             //     indexes[index]++;
+    //             //     min=-1;
+    //             // }
+    //             if(indexes[index]==0){
+    //                 indexes[index]++;
+    //                 min=-1;
+    //                 break;
+    //             } 
+    //         }
+    //         if(i==matrix.length&&indexes[index]!=0){
+    //             indexes[index]++;
+    //             min=-1;
+    //         }
+    //         //System.out.println("k:"+k+" num:"+(matrix[index][indexes[index]-1]));
+    //     }
+    //     return matrix[index][indexes[index]-1];
+    // }
+
+    ////与上面思路完全一样，但使用小根堆
+    public int kthSmallest(int[][] matrix, int k) {
+        PriorityQueue<int[]> pq = new PriorityQueue<int[]>(new Comparator<int[]>() {
+            public int compare(int[] a, int[] b) {
+                return a[0] - b[0];
+            }
+        });
+        int n = matrix.length;
+        for (int i = 0; i < n; i++) {
+            pq.offer(new int[]{matrix[i][0], i, 0});
+        }
+        for (int i = 0; i < k - 1; i++) {
+            int[] now = pq.poll();
+            if (now[2] != n - 1) {
+                pq.offer(new int[]{matrix[now[1]][now[2] + 1], now[1], now[2] + 1});
+            }
+        }
+        return pq.poll()[0];
+    }
+}
